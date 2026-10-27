@@ -50,7 +50,7 @@ main > section { margin: clamp(48px, 6vw, 88px) 0; }
 .hero { position: relative; background: var(--ink); color: #fff; border-radius: var(--r); min-height: 560px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden; margin-top: 8px !important; isolation: isolate; }
 .hero__text { position: relative; z-index: 2; padding: clamp(36px, 5vw, 64px); }
 .hero__title { font-size: clamp(2rem, 3.6vw, 3.1rem); line-height: 1.18; color: #fff; margin-bottom: 22px; }
-.hero__title .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; } .hero__title .line > span { display: block; }
+.hero__title .line { display: block; overflow: hidden; padding-block: .2em; margin-block: -.2em; } .hero__title .line > span { display: block; }
 .hero__sub { max-width: 30em; color: #D9D3C9; font-size: 15px; margin-bottom: 28px; }
 .hero__cta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
 .hero__link { color: #fff; font-weight: 500; font-size: 14px; text-decoration: underline; text-underline-offset: 5px; min-height: 44px; display: inline-flex; align-items: center; }
