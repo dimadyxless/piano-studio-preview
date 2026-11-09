@@ -70,14 +70,14 @@
   const lb = $('#lightbox'); let gallery = null, items = [], idx = 0, lastFocus = null;
   const media = $('.lightbox__media', lb), cap = $('.lightbox__cap', lb);
   const loadGallery = () => gallery ? Promise.resolve(gallery) : fetch('gallery.json').then(r => r.json()).then(g => (gallery = g));
-  function render() {
+  function render(playVideo = false) {
     const it = items[idx], d = gallery[it.id]; media.innerHTML = '';
-    if (d.video) { const v = document.createElement('video'); v.src = d.video; v.poster = d.poster; v.controls = true; v.playsInline = true; v.preload = 'none'; v.setAttribute('playsinline', ''); media.appendChild(v); v.play().catch(() => {}); }
+    if (d.video) { const v = document.createElement('video'); v.src = d.video; v.poster = d.poster; v.controls = true; v.playsInline = true; v.preload = 'none'; v.setAttribute('playsinline', ''); media.appendChild(v); if (playVideo) v.play().catch(() => {}); }
     else { const im = new Image(); im.src = d.webp || d.src; im.alt = d.alt || ''; im.width = d.w; im.height = d.h; im.onerror = () => { im.src = d.src; }; media.appendChild(im); }
     cap.textContent = it.cap || d.cap || '';
     if (hasGsap && !reduce) gsap.fromTo(media, { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .4, ease: 'power2.out' });
   }
-  function openLb(list, i) { items = list; idx = i; lastFocus = document.activeElement; loadGallery().then(() => { lb.hidden = false; document.body.style.overflow = 'hidden'; render(); $('.lightbox__close', lb).focus(); }); }
+  function openLb(list, i) { items = list; idx = i; lastFocus = document.activeElement; loadGallery().then(() => { lb.hidden = false; document.body.style.overflow = 'hidden'; render(true); $('.lightbox__close', lb).focus(); }); }
   function closeLb() { lb.hidden = true; document.body.style.overflow = ''; media.innerHTML = ''; if (lastFocus) lastFocus.focus(); }
   const step = d => { idx = (idx + d + items.length) % items.length; render(); };
   if (lb) {
@@ -93,10 +93,17 @@
     posters.forEach((el, i) => {
       el.tabIndex = 0; el.setAttribute('role', 'button');
       if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', (el.dataset.video ? 'Смотреть видео: ' : 'Открыть: ') + (list[i].cap || '').trim());
-      const go = () => openLb(list, i);
+      const go = () => { const visible = posters.map((node,j)=>({node,item:list[j]})).filter(x=>!x.node.closest('details:not([open])')); openLb(visible.map(x=>x.item),visible.findIndex(x=>x.node===el)); };
       el.addEventListener('click', go); el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
     });
   }
+
+  $$('.media-more').forEach(details => details.addEventListener('toggle', () => {
+    if (hasGsap && !reduce) {
+      if (details.open) gsap.fromTo($$('.wall__item', details), {opacity:0,x:12,y:18}, {opacity:1,x:0,y:0,duration:.5,stagger:.035,clearProps:'transform'});
+      ScrollTrigger.refresh();
+    }
+  }));
 
   /* FAQ */
   $$('.faq').forEach(f => f.addEventListener('toggle', e => { if (e.target.open) $$('details[open]', f).forEach(d => { if (d !== e.target) d.open = false; }); }, true));
@@ -151,7 +158,7 @@
   if (page === 'life.html') {
     mm.add({ isDesktop: '(min-width: 901px)', isMobile: '(max-width: 900px)' }, ctx => {
       const d = ctx.conditions.isDesktop;
-      $$('.wall__grid').forEach(grid => {
+      $$('.wall__grid').filter(grid => !grid.closest('.media-more')).forEach(grid => {
         const its = $$('.wall__item', grid);
         gsap.set(its, { opacity: 0, x: i => (d ? 50 : 20) * (i % 3 - 1), y: i => (d ? 60 : 26) + (i % 2) * 16, rotate: i => (i % 2 ? 1.5 : -1.5) });
         ScrollTrigger.create({ trigger: grid, start: 'top 85%', once: true, onEnter: () => gsap.to(its, { opacity: 1, x: 0, y: 0, rotate: 0, duration: .9, stagger: .08, ease: 'power3.out', onComplete: () => its.forEach(el => { const depth = +el.dataset.depth || 1; gsap.fromTo(el, { y: (d ? 18 : 7) * depth }, { y: -(d ? 18 : 7) * depth, ease: 'none', scrollTrigger: { trigger: grid, start: 'top bottom', end: 'bottom top', scrub: true } }); }) }) });
