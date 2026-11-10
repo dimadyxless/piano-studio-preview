@@ -373,3 +373,14 @@ main > section { margin: clamp(48px, 6vw, 88px) 0; }
 @media(max-width:600px){.wall__grid--compact figcaption {font-size:11px;padding:28px 8px 8px;}.media-jumps {justify-content:flex-start;}.media-jumps a {font-size:13px;}}
 
 .wall__grid--compact .wall__item--landscape { grid-column:span 2;aspect-ratio:16/9; }
+
+/* Gallery geometry stays fixed while images animate within each frame. */
+.wall__grid { min-width:0;align-items:stretch; }
+.wall__item { min-width:0;min-height:0;isolation:isolate; }
+.wall__item img { position:absolute;inset:0;display:block;width:100%;height:100%; }
+.wall__item figcaption { z-index:1;overflow-wrap:anywhere; }
+.wall__item .play { z-index:2; }
+.wall__grid--compact { grid-auto-rows:clamp(240px,26vw,380px); }
+.wall__grid--compact .wall__item,.wall__grid--compact .wall__item--landscape { aspect-ratio:auto; }
+.media-more { clear:both; }
+@media(max-width:900px){.wall__grid--compact { grid-auto-rows:clamp(210px,56vw,340px); }}

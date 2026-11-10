@@ -100,7 +100,7 @@
 
   $$('.media-more').forEach(details => details.addEventListener('toggle', () => {
     if (hasGsap && !reduce) {
-      if (details.open) gsap.fromTo($$('.wall__item', details), {opacity:0,x:12,y:18}, {opacity:1,x:0,y:0,duration:.5,stagger:.035,clearProps:'transform'});
+      if (details.open) gsap.fromTo($$('.wall__item', details), {opacity:0}, {opacity:1,duration:.5,stagger:.035});
       ScrollTrigger.refresh();
     }
   }));
@@ -154,14 +154,18 @@
   $$('.tune__art').forEach(a => ScrollTrigger.create({ trigger: a, start: 'top 85%', once: true, onEnter: () => { a.classList.add('is-in'); gsap.fromTo(a, { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: .9, ease: 'power3.out', clearProps: 'clipPath' }); } }));
   gsap.from('.footer__staff', { scaleX: 0, transformOrigin: 'left', duration: .9, ease: 'power2.out', scrollTrigger: { trigger: '.footer', start: 'top 95%', once: true } });
 
-  /* СЦЕНА 3: стена постеров */
+  /* СЦЕНА 3: stationary cards; motion stays inside their clipped images. */
   if (page === 'life.html') {
     mm.add({ isDesktop: '(min-width: 901px)', isMobile: '(max-width: 900px)' }, ctx => {
       const d = ctx.conditions.isDesktop;
       $$('.wall__grid').filter(grid => !grid.closest('.media-more')).forEach(grid => {
-        const its = $$('.wall__item', grid);
-        gsap.set(its, { opacity: 0, x: i => (d ? 50 : 20) * (i % 3 - 1), y: i => (d ? 60 : 26) + (i % 2) * 16, rotate: i => (i % 2 ? 1.5 : -1.5) });
-        ScrollTrigger.create({ trigger: grid, start: 'top 85%', once: true, onEnter: () => gsap.to(its, { opacity: 1, x: 0, y: 0, rotate: 0, duration: .9, stagger: .08, ease: 'power3.out', onComplete: () => its.forEach(el => { const depth = +el.dataset.depth || 1; gsap.fromTo(el, { y: (d ? 18 : 7) * depth }, { y: -(d ? 18 : 7) * depth, ease: 'none', scrollTrigger: { trigger: grid, start: 'top bottom', end: 'bottom top', scrub: true } }); }) }) });
+        const its = $$('.wall__item', grid), pictures = $$('img', grid);
+        gsap.set(its, { opacity: 0 });
+        gsap.set(pictures, { scale: 1.08, y: d ? 16 : 8 });
+        ScrollTrigger.create({ trigger: grid, start: 'top 95%', once: true, onEnter: () => {
+          gsap.to(its, { opacity: 1, duration: .65, stagger: .07 });
+          gsap.to(pictures, { scale: 1, y: 0, duration: .9, stagger: .07, ease: 'power3.out' });
+        }});
       });
     });
   }
