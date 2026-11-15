@@ -4,7 +4,21 @@ import argparse,shutil
 from bs4 import BeautifulSoup
 p=argparse.ArgumentParser();p.add_argument('--base',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();out=a.output;out.mkdir(parents=True,exist_ok=True)
 for n in ['fonts']:shutil.copytree(a.base/n,out/n,dirs_exist_ok=True)
-for n in ['logo.webp','keyboard-reference.jpeg']:shutil.copy2(a.base/n,out/n)
+shutil.copy2(a.base/'logo.webp',out/'logo.webp')
+
+def flat_keyboard(paper,divider):
+ # Same full-height left strip; a flat, softly outlined 2+3 black-key rhythm.
+ shapes=[f'<svg viewBox="0 0 250 1123" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="250" height="1123" fill="{paper}"/>']
+ step=49
+ for i in range(24):
+  y=i*step
+  shapes.append(f'<path d="M0 {y}H250" stroke="{divider}" stroke-width="1.4"/>')
+ for i in range(24):
+  y=i*step
+  if i%7 in [0,1,3,4,5]:
+   shapes.append(f'<rect x="-5" y="{y+step-13}" width="178" height="26" rx="5" fill="#53574f"/>')
+ shapes.append(f'<path d="M249 0V1123" stroke="{divider}" stroke-width="2"/></svg>')
+ return ''.join(shapes)
 
 def art(kind):
  bg={'fox':'#f7cf89','bunny':'#cfdbf3','bear':'#ccdfbd'}[kind]
@@ -17,13 +31,18 @@ def art(kind):
 opts=[('01','fox','Лисёнок на сцене','#fff6e5','#b77538','Тёплый персиковый и солнечные акценты.'),('02','bunny','Зайчонок-музыкант','#f1f3fc','#777fa7','Нежный сиреневый и мягкие звёздочки.'),('03','bear','Медвежонок за клавишами','#f1f5e8','#688450','Светлый зелёный и уютный лесной характер.')]
 for n,kind,title,bg,accent,desc in opts:
  s=BeautifulSoup((a.base/'variant-01.html').read_text(encoding='utf-8'),'html.parser')
+ colors={'fox':('#fff3dd','#dbcdb5'),'bunny':('#f1f0fa','#cccddd'),'bear':('#eef3e3','#cbd5bc')}
+ s.select_one('.keys').clear()
+ s.select_one('.keys').append(BeautifulSoup(flat_keyboard(*colors[kind]),'html.parser'))
  s.title.string=title+' — детский диплом'
  s.select_one('.tools').clear();s.select_one('.tools').append(BeautifulSoup(f'<strong>{n} · {title}</strong><p>Для детей 5–7 лет · на согласование</p><a href="index.html">Все варианты</a> <button onclick="print()">Печать / PDF</button>','html.parser'))
  s.select_one('.subtitle').string='за музыкальное выступление'
  s.select_one('.thanks').clear();s.select_one('.thanks').append(BeautifulSoup('Спасибо за старание, смелость<br>и музыку, которой ты делишься!','html.parser'))
  s.select_one('.music').replace_with(BeautifulSoup('<div class="animal">'+art(kind)+'</div>','html.parser'))
  st=s.new_tag('style');st.string=f'''.sheet{{background:{bg};--accent:{accent}}}.sheet .frame{{border-color:{accent};border-radius:16px}}.sheet .content{{top:13mm}}.sheet .logo{{width:66mm}}.eyebrow{{font-size:9px;letter-spacing:2px}}.rule{{margin:22px auto 19px}}.sheet h1{{font-size:58px;color:{accent}}}.subtitle{{margin:15px 0 20px}}.awarded{{margin-bottom:8px}}.sheet .name{{font-size:24px;min-height:50px}}.sheet .reason{{margin-top:18px;font-size:15px;line-height:1.65}}.sheet .event{{font-size:20px;min-height:42px}}.sheet .thanks{{margin-top:18px;font-size:13px;line-height:1.7}}.animal{{position:absolute;bottom:98px;width:100%;height:242px}}.animal svg{{width:100%;height:100%;display:block}}.footer{{font-size:10px}}''';s.head.append(st)
+ st.string += '.sheet .keys svg{display:block;width:100%;height:100%}.sheet .keys{border:0;opacity:1}'
  (out/f'variant-{n}.html').write_text(str(s),encoding='utf-8')
 cards=''.join(f'<article><a href="variant-{n}.html"><img src="variant-{n}.png" alt="{title}"></a><h2>{n} · {title}</h2><p>{desc}</p><a href="variant-{n}.html">Заполнить диплом</a> · <a href="variant-{n}.pdf">PDF A4</a></article>' for n,k,title,bg,accent,desc in opts)
 base=BeautifulSoup((a.base/'index.html').read_text(encoding='utf-8'),'html.parser');base.title.string='Три детских диплома';base.h1.string='Детские дипломы · 5–7 лет';base.select_one('.note').string='Клавиши сохранены из последнего согласованного по композиции варианта. Логотип сайта, добрые зверята и награда за выступление. Только локальное согласование; на сайте не опубликовано.';base.select_one('.grid').clear();base.select_one('.grid').append(BeautifulSoup(cards,'html.parser'));base.select('p.note')[-1].string='Все варианты подходят детям 5–7 лет. Выберите героя и оформление. Имя, название концерта и дата заполняются в HTML; PDF — пустой бланк A4. Подпись ставится вручную.'
+base.select_one('.note').string='Единая иллюстративная стилистика: плоские клавиши в тон каждого диплома, мягкий графит, добрые зверята и логотип студии. Дипломы за выступление, для детей 5–7 лет. Только на согласование.'
 (out/'index.html').write_text(str(base),encoding='utf-8');print(out)
