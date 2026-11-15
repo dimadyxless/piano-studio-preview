@@ -36,7 +36,7 @@ for n,kind,title,bg,accent,desc in opts:
  s.select_one('.keys').append(BeautifulSoup(flat_keyboard(*colors[kind]),'html.parser'))
  s.title.string=title+' — детский диплом'
  s.select_one('.tools').clear();s.select_one('.tools').append(BeautifulSoup(f'<strong>{n} · {title}</strong><p>Для детей 5–7 лет · на согласование</p><a href="index.html">Все варианты</a> <button onclick="print()">Печать / PDF</button>','html.parser'))
- s.select_one('.subtitle').string='за музыкальное выступление'
+ s.select_one('.subtitle').string='За выступление в отчётном концерте'
  s.select_one('.thanks').clear();s.select_one('.thanks').append(BeautifulSoup('Спасибо за старание, смелость<br>и музыку, которой ты делишься!','html.parser'))
  s.select_one('.music').replace_with(BeautifulSoup('<div class="animal">'+art(kind)+'</div>','html.parser'))
  st=s.new_tag('style');st.string=f'''.sheet{{background:{bg};--accent:{accent}}}.sheet .frame{{border-color:{accent};border-radius:16px}}.sheet .content{{top:13mm}}.sheet .logo{{width:66mm}}.eyebrow{{font-size:9px;letter-spacing:2px}}.rule{{margin:22px auto 19px}}.sheet h1{{font-size:58px;color:{accent}}}.subtitle{{margin:15px 0 20px}}.awarded{{margin-bottom:8px}}.sheet .name{{font-size:24px;min-height:50px}}.sheet .reason{{margin-top:18px;font-size:15px;line-height:1.65}}.sheet .event{{font-size:20px;min-height:42px}}.sheet .thanks{{margin-top:18px;font-size:13px;line-height:1.7}}.animal{{position:absolute;bottom:98px;width:100%;height:242px}}.animal svg{{width:100%;height:100%;display:block}}.footer{{font-size:10px}}''';s.head.append(st)
