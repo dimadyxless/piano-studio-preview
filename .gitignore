@@ -1,0 +1,19 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.ssh/
+# Backups and private working material
+*.zip
+*.tar
+*.tar.gz
+backups/
+site-backups/
+handoff-*/
+# Local tools
+node_modules/
+__pycache__/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.virtuousofmusic\.ru(?::[0-9]+)?$ [NC]
+RewriteRule ^ https://virtuousofmusic.ru%{REQUEST_URI} [R=301,L,NE]
