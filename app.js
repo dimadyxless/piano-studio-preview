@@ -152,7 +152,6 @@
   }
   /* завершающая графическая композиция (карточка записи перед футером) — короткое раскрытие */
   $$('.tune__art').forEach(a => ScrollTrigger.create({ trigger: a, start: 'top 85%', once: true, onEnter: () => { a.classList.add('is-in'); gsap.fromTo(a, { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: .9, ease: 'power3.out', clearProps: 'clipPath' }); } }));
-  gsap.from('.footer__staff', { scaleX: 0, transformOrigin: 'left', duration: .9, ease: 'power2.out', scrollTrigger: { trigger: '.footer', start: 'top 95%', once: true } });
 
   /* СЦЕНА 3: stationary cards; motion stays inside their clipped images. */
   if (page === 'life.html') {

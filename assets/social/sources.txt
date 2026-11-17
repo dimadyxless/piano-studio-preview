@@ -1,0 +1,4 @@
+max.svg: https://max.ru/favicon.svg
+vk.png: https://vk.com/images/icons/pwa/favicon_32.png?12
+telegram.svg: https://telegram.org/img/website_icon.svg?4
+2gis.svg: https://info.2gis.ru/__info-new/assets/seo/icon.svg
