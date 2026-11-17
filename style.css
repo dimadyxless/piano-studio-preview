@@ -35,7 +35,7 @@ main > section { margin: clamp(48px, 6vw, 88px) 0; }
 .circle svg { width: 18px; height: 18px; }
 
 /* навигация */
-.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; position: sticky; top: 0; z-index: 50; background: var(--bg); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; position: relative; z-index: 50; background: var(--bg); }
 .nav__logo { display: inline-flex; align-items: center; gap: 8px; font: 400 16px var(--fs); color: var(--ink); text-decoration: none; }
 .nav__logo svg { width: 24px; height: 24px; }
 .nav__menu { display: flex; align-items: center; gap: 28px; }
